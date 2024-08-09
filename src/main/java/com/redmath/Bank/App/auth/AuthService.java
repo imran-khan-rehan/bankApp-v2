@@ -1,5 +1,6 @@
 package com.redmath.Bank.App.auth;
 
+import com.redmath.Bank.App.Account.AccountService;
 import com.redmath.Bank.App.Balance.BalanceService;
 import com.redmath.Bank.App.Jwt.JwtUtil;
 import com.redmath.Bank.App.User.User;
@@ -31,7 +32,7 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private BalanceService balanceService;
+    private AccountService accountService;
 
     private static final int UNAUTHORIZED_STATUS = HttpStatus.UNAUTHORIZED.value();
 
@@ -62,7 +63,7 @@ public class AuthService {
 
             // Proceed with balance creation
             if (userRepository.findByEmail(user.getEmail()).getId() != null) {
-                balanceService.createBalanceForUser(user.getEmail(), 0.0);
+               accountService.createAccount(user,"saving");
             } else {
                 return "failure";
             }

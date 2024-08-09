@@ -2,7 +2,6 @@ package com.redmath.Bank.App.auth;
 
 import com.redmath.Bank.App.User.User;
 import com.redmath.Bank.App.User.UserRepository;
-import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
