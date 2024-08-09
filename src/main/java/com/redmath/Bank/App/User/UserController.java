@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v2/users")
 @RestController
 public class UserController {
 
@@ -24,8 +24,8 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    @GetMapping("/alls")
+   // @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @GetMapping
     public List<User> getAll() {
         return userService.findAll();
     }

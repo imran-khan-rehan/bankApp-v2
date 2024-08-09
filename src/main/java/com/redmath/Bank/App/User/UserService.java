@@ -63,9 +63,9 @@ public UserDetails loadUserByUsername(String email) {
             return newUser;
         });
     }
-    public User findByAccountNumber(String account){
-       return userRepository.findByAccountNumber(account);
-    }
+//    public User findByAccountNumber(String account){
+//       return userRepository.findByAccountNumber(account);
+//    }
 
     public void delete(Long userId) {
         userRepository.deleteById(userId);

@@ -4,4 +4,4 @@ databaseChangeLog:
   - include:
       file: "db/changelog/db.changelog-transaction.yaml"
   - include:
-      file: "db/changelog/db.changelog-balance.yaml"
+      file: "db/changelog/db.changelog-account.yaml"

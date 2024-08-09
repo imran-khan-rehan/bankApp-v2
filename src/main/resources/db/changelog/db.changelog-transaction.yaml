@@ -17,12 +17,16 @@ databaseChangeLog:
               - column:
                   name: sender
                   type: BIGINT
+                  constraints:
+                    nullable: false
               - column:
                   name: receiver
                   type: BIGINT
+                  constraints:
+                    nullable: false
               - column:
                   name: amount
-                  type: DOUBLE
+                  type: DECIMAL(19, 2)
                   constraints:
                     nullable: false
               - column:
@@ -30,17 +34,29 @@ databaseChangeLog:
                   type: TIMESTAMP
                   constraints:
                     nullable: false
+
         - addForeignKeyConstraint:
             baseTableName: transaction
             baseColumnNames: sender
-            constraintName: FK_SENDER
-            referencedTableName: users
+            constraintName: FK_TRANSACTION_SENDER
+            referencedTableName: accounts
             referencedColumnNames: id
-            onDelete: SET NULL
+            onDelete: CASCADE
+
         - addForeignKeyConstraint:
             baseTableName: transaction
             baseColumnNames: receiver
-            constraintName: FK_RECEIVER
-            referencedTableName: users
+            constraintName: FK_TRANSACTION_RECEIVER
+            referencedTableName: accounts
             referencedColumnNames: id
-            onDelete: SET NULL
+            onDelete: CASCADE
+
+        - createIndex:
+            tableName: transaction
+            columns:
+              - column:
+                  name: sender
+              - column:
+                  name: receiver
+            indexName: IDX_TRANSACTION_SENDER_RECEIVER
+            unique: false

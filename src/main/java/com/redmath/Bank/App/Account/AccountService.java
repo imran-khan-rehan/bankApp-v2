@@ -23,7 +23,7 @@ public class AccountService {
         account.setAccountHolder(user);
         account.setAccountNumber(generateUniqueAccountNumber(user.getId()));
         account.setAccountType(accountType);
-        account.setBalance(0L); // Initial balance is set to 0
+        account.setBalance(0.0);
 
         return accountRepository.save(account);
     }

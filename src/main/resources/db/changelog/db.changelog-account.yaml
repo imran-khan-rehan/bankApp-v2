@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 1
       author: imran
+      context: h2
       changes:
         - createTable:
             tableName: accounts
@@ -26,7 +27,7 @@ databaseChangeLog:
                     unique: true
               - column:
                   name: balance
-                  type: BIGINT
+                  type: DECIMAL(19, 2)
                   constraints:
                     nullable: false
               - column:

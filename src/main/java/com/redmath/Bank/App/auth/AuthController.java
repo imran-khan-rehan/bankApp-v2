@@ -21,7 +21,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) throws Exception {
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) throws Exception {
         User user = userRepository.findByEmail(authRequest.getEmail());
         if (user == null) {
             return ResponseEntity
@@ -36,19 +36,19 @@ public class AuthController {
         if (!validateUser(user)) {
             return ResponseEntity
                     .badRequest()
-                    .body(new AuthResponse("Invalid or empty data"));
+                    .body("Invalid or empty data");
         }
         if (userRepository.findByEmail(user.getEmail()) != null) {
             return ResponseEntity
                     .badRequest()
-                    .body(new AuthResponse("User already exists"));
+                    .body("User already exists");
         }
         user.setRole("USER");
         String result = authService.registerUser(user);
         if ("success".equals(result)) {
-            return ResponseEntity.status(201).body(new AuthResponse("User registered successfully")); // 201 Created
+            return ResponseEntity.status(201).body("User registered successfully"); // 201 Created
         } else {
-            return ResponseEntity.status(500).body(new AuthResponse("User registration failed")); // 500 Internal Server Error
+            return ResponseEntity.status(500).body("User registration failed"); // 500 Internal Server Error
         }
     }
 

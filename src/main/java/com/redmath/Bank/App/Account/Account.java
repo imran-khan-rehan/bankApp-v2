@@ -3,8 +3,7 @@ package com.redmath.Bank.App.Account;
 import com.redmath.Bank.App.User.User;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "accounts")
+@Entity(name = "accounts")
 public class Account {
 
     @Id
@@ -20,7 +19,7 @@ public class Account {
     private String accountNumber;
 
     @Column( nullable = false)
-    private Long balance;
+    private Double balance;
 
     @Column( nullable = false)
     private String accountType;
@@ -50,11 +49,11 @@ public class Account {
         this.accountNumber = accountNumber;
     }
 
-    public Long getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 

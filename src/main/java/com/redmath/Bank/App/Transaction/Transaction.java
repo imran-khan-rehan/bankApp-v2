@@ -1,7 +1,6 @@
 package com.redmath.Bank.App.Transaction;
 
 import com.redmath.Bank.App.Account.Account;
-import com.redmath.Bank.App.User.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,14 +17,14 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(
-            name = "sender_id",
+            name = "sender",
             foreignKey = @ForeignKey(name = "FK_SENDER")
     )
     private Account sender;
 
     @ManyToOne
     @JoinColumn(
-            name = "receiver_id",
+            name = "receiver",
             foreignKey = @ForeignKey(name = "FK_RECEIVER")
     )
     private Account receiver;

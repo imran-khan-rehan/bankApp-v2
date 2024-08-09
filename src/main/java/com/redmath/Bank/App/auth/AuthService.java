@@ -1,7 +1,6 @@
 package com.redmath.Bank.App.auth;
 
 import com.redmath.Bank.App.Account.AccountService;
-import com.redmath.Bank.App.Balance.BalanceService;
 import com.redmath.Bank.App.Jwt.JwtUtil;
 import com.redmath.Bank.App.User.User;
 import com.redmath.Bank.App.User.UserRepository;
@@ -36,16 +35,19 @@ public class AuthService {
 
     private static final int UNAUTHORIZED_STATUS = HttpStatus.UNAUTHORIZED.value();
 
-    public ResponseEntity<?> authenticate(AuthRequest authRequest) throws Exception {
+    public ResponseEntity<AuthResponse> authenticate(AuthRequest authRequest) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
             );
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(UNAUTHORIZED_STATUS).body(new AuthResponse("Incorrect password"));
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(new AuthResponse("Incorrect password"));
         }
         User user = userRepository.findByEmail(authRequest.getEmail());
-        return ResponseEntity.ok(new AuthResponse(jwtUtil.generateToken(authRequest.getEmail()), user.getId(), user.getRole(), user.getAccountNumber()));
+        String token = jwtUtil.generateToken(authRequest.getEmail());
+        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getRole(), "1234"));
     }
 
     public String registerUser(User user) {
@@ -55,8 +57,8 @@ public class AuthService {
         // Generate a unique account number
         Long userId = user.getId();
         if (userId != null) {
-            String accountNumber = generateUniqueAccountNumber(userId);
-            user.setAccountNumber(accountNumber);
+ //           String accountNumber = generateUniqueAccountNumber(userId);
+//            user.setAccountNumber(accountNumber);
 
             // Save user again to update account number
             userRepository.save(user);

@@ -1,6 +1,6 @@
 package com.redmath.Bank.App.User;
 
-import com.redmath.Bank.App.Balance.Balance;
+import com.redmath.Bank.App.Account.Account;
 import com.redmath.Bank.App.Transaction.Transaction;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -20,7 +20,7 @@ public class User {
     private Long id;
 
     @Column(unique = true)
-    private String accountNumber;
+    private String address;
 
     @Column(unique = true)
     private String email;
@@ -30,15 +30,15 @@ public class User {
     private String password;
 
     private String role;
-
-    @OneToMany(mappedBy = "accountHolder", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Balance> balances;
-
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = false)
-    private List<Transaction> sentTransactions;
-
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = false)
-    private List<Transaction> receivedTransactions;
+//
+//    @OneToMany(mappedBy = "accountHolder", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<Account> accounts;
+//
+//    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = false)
+//    private List<Transaction> sentTransactions;
+//
+//    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = false)
+//    private List<Transaction> receivedTransactions;
 
     public User() {
 
@@ -46,7 +46,7 @@ public class User {
     public User(User other) {
         if(other != null){
             this.id = other.id;
-            this.accountNumber = other.accountNumber;
+            this.address = other.address;
             this.email = other.email;
             this.name = other.name;
             this.password = other.password;
@@ -69,12 +69,12 @@ public class User {
         this.id = id;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getEmail() {

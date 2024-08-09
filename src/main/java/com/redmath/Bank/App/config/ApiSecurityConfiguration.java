@@ -98,9 +98,9 @@ public class ApiSecurityConfiguration {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(config -> config
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v2/auth/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/swagger-ui/**",  "/h2-console", "/v3/api-docs", "/swagger-ui/swagger-config.json").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/users/alls").hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v2/users").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/api/v1/balance/all").hasAnyAuthority("ADMIN")
 //                        .requestMatchers(HttpMethod.GET, "/api/v1/transactions/all").hasAnyAuthority("ADMIN")
 //                        .requestMatchers(HttpMethod.DELETE,"api/v1/users/**").hasAnyAuthority("ADMIN")
