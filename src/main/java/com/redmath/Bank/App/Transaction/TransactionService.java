@@ -1,13 +1,16 @@
 package com.redmath.Bank.App.Transaction;
 
-import com.redmath.Bank.App.Balance.Balance;
-import com.redmath.Bank.App.Balance.BalanceRepository;
+import com.redmath.Bank.App.Account.Account;
+import com.redmath.Bank.App.Account.AccountRepository;
 import com.redmath.Bank.App.User.User;
 import com.redmath.Bank.App.User.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,7 +20,7 @@ public class TransactionService {
     private TransactionRepository transactionRepository;
 
     @Autowired
-    private BalanceRepository balanceRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
     private UserService userService;
@@ -26,44 +29,36 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
-    public Transaction save(Transaction transaction) {
-        return transactionRepository.save(transaction);
-    }
-
     public List<Transaction> allTransactionUser(Long userId) {
-        return transactionRepository.findBySenderIdOrReceiverId(userId, userId);
-    }
-
-    public User checkUserExist(String account) {
-        return userService.findByAccountNumber(account);
+        return transactionRepository.findBySenderAccountHolderIdOrReceiverAccountHolderId(userId, userId);
     }
 
     @Transactional
     public Transaction createTransaction(Transaction transaction) {
-        // Update sender's balance
-        Balance senderBalance = balanceRepository.findByAccountHolder(transaction.getSender())
-                .orElseThrow(() -> new RuntimeException("Sender balance not found"));
-
-        if (senderBalance.getAmount() < transaction.getAmount()) {
-            throw new RuntimeException("Insufficient balance");
+        if (transaction.getSender() == null || transaction.getReceiver() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sender and receiver must be provided");
+        }
+        if (transaction.getAmount() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction amount must be greater than zero");
         }
 
-        senderBalance.setAmount(senderBalance.getAmount() - transaction.getAmount());
-        balanceRepository.save(senderBalance);
+        Account senderAccount = accountRepository.findById(transaction.getSender().getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender account not found"));
 
-        // Update receiver's balance
-        Balance receiverBalance = balanceRepository.findByAccountHolder(transaction.getReceiver())
-                .orElseGet(() -> {
-                    Balance newBalance = new Balance();
-                    newBalance.setAccountHolder(transaction.getReceiver());
-                    newBalance.setAmount(0.0);
-                    return newBalance;
-                });
+        if (senderAccount.getBalance() < transaction.getAmount()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance");
+        }
 
-        receiverBalance.setAmount(receiverBalance.getAmount() + transaction.getAmount());
-        balanceRepository.save(receiverBalance);
+        Account receiverAccount = accountRepository.findById(transaction.getReceiver().getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receiver account not found"));
 
-        // Save transaction
+        senderAccount.setBalance(senderAccount.getBalance() - transaction.getAmount());
+        accountRepository.save(senderAccount);
+
+        receiverAccount.setBalance(receiverAccount.getBalance() + transaction.getAmount());
+        accountRepository.save(receiverAccount);
+
+        transaction.setDate(LocalDateTime.now());
         return transactionRepository.save(transaction);
     }
 }
