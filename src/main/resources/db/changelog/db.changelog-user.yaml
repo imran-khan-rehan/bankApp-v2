@@ -1,0 +1,86 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: imran
+      context: h2
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: accountNumber
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2
+      author: imran
+      context: h2
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: 'user@user.com'
+              - column:
+                  name: name
+                  value: 'user'
+              - column:
+                  name: accountNumber
+                  value: '1234567890'
+              - column:
+                  name: password
+                  value: '$2a$12$oM/hqR2TGWbp1fQwlgH8t.nmGSy2AuKTz92ro/LPUiDkXA9IrK0fi'
+              - column:
+                  name: role
+                  value: 'USER'
+
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: 'admin@admin.com'
+              - column:
+                  name: name
+                  value: 'admin'
+              - column:
+                  name: password
+                  value: '$2a$12$oM/hqR2TGWbp1fQwlgH8t.nmGSy2AuKTz92ro/LPUiDkXA9IrK0fi'
+              - column:
+                  name: role
+                  value: 'ADMIN'
+              - column:
+                  name: accountNumber
+                  value: '1234567891'
