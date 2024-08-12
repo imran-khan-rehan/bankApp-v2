@@ -20,7 +20,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<Transaction>> getAll() {
         List<Transaction> transactions = transactionService.getAll();
         return ResponseEntity.ok(transactions);
@@ -30,7 +30,7 @@ public class TransactionController {
     public ResponseEntity<?> create(@RequestBody Transaction transaction) {
         try {
             Transaction savedTransaction = transactionService.createTransaction(transaction);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedTransaction);
+            return ResponseEntity.status(HttpStatus.CREATED).body("transaction created");
         } catch (ResponseStatusException e) {
             LOG.error("Error during transaction creation: ", e);
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
@@ -41,9 +41,14 @@ public class TransactionController {
     }
 
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Transaction>> getTransactionUser(@PathVariable Long userId) {
-        List<Transaction> transactions = transactionService.allTransactionUser(userId);
-        return ResponseEntity.ok(transactions);
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<?> getTransactionUser(@PathVariable Long userId) {
+        try {
+            List<Transaction> transactions = transactionService.allTransactionUser(userId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(transactions);
+        } catch (ResponseStatusException e) {
+            LOG.error("Error during transaction creation: ", e);
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
     }
 }

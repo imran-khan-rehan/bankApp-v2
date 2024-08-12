@@ -16,7 +16,11 @@ public class AccountController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/create")
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(accountService.findAll());
+    }
+    @PostMapping
     public ResponseEntity<?> createAccount(@RequestBody AccountRequest accountRequest) {
         User user = userRepository.findById(accountRequest.getUserId()).orElse(null);
         if (user == null) {
@@ -27,13 +31,16 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
-    @GetMapping("/{accountId}")
-    public ResponseEntity<?> getAccountById(@PathVariable Long accountId) {
-        Account account = accountService.getAccountById(accountId);
+    @GetMapping("/users/{Id}")
+    public ResponseEntity<?> getAccountById(@PathVariable Long Id) {
+        Account account = accountService.getAccountByHoderId(Id);
         if (account == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(account);
+
+        // Convert Account entity to AccountDTO
+        AccountDTO accountDTO = new AccountDTO(account.getAccountNumber(), account.getBalance());
+        return ResponseEntity.ok(accountDTO);
     }
 
     @DeleteMapping("/{accountId}")

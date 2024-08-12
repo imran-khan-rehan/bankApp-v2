@@ -30,7 +30,12 @@ public class TransactionService {
     }
 
     public List<Transaction> allTransactionUser(Long userId) {
-        return transactionRepository.findBySenderAccountHolderIdOrReceiverAccountHolderId(userId, userId);
+        Account accountHoler= accountRepository.findByAccountHolderId(userId).orElse(null);
+
+        if(accountHoler == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "no user of this id");
+        }
+        return transactionRepository.findBySenderAccountHolderIdOrReceiverAccountHolderId(accountHoler.getId(),accountHoler.getId());
     }
 
     @Transactional
@@ -42,14 +47,14 @@ public class TransactionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction amount must be greater than zero");
         }
 
-        Account senderAccount = accountRepository.findById(transaction.getSender().getId())
+        Account senderAccount = accountRepository.findByAccountHolderId(transaction.getSender().getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender account not found"));
 
         if (senderAccount.getBalance() < transaction.getAmount()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance");
         }
 
-        Account receiverAccount = accountRepository.findById(transaction.getReceiver().getId())
+        Account receiverAccount = accountRepository.findByAccountNumber(transaction.getReceiver().getAccountNumber())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receiver account not found"));
 
         senderAccount.setBalance(senderAccount.getBalance() - transaction.getAmount());
@@ -58,6 +63,9 @@ public class TransactionService {
         receiverAccount.setBalance(receiverAccount.getBalance() + transaction.getAmount());
         accountRepository.save(receiverAccount);
 
+        // Ensure the sender and receiver accounts are managed entities
+        transaction.setSender(senderAccount);
+        transaction.setReceiver(receiverAccount);
         transaction.setDate(LocalDateTime.now());
         return transactionRepository.save(transaction);
     }

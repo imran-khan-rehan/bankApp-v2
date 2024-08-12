@@ -5,13 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,35 +24,45 @@ public class UserController {
         return userService.findAll();
     }
 
-
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getDetails(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.findUser(userId));
+    public ResponseEntity<UserDTO> getDetails(@PathVariable Long userId) {
+        User user = userService.findUser(userId);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        UserDTO userDTO = new UserDTO(user.getName(), user.getEmail(), user.getAddress());
+        return ResponseEntity.ok(userDTO);
     }
 
-    @PutMapping("/{userId}")
+    @PatchMapping("/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody User user) {
 
+        if (!validateUser(user)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Invalid or empty data");
+        }
         User existingUser = userService.findUser(userId);
         if (existingUser.getId() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-
         if (!existingUser.getEmail().equals(user.getEmail()) && userService.alreadyRegister(user.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
         }
 
-
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
-
+        existingUser.setAddress(user.getAddress());
         if (user.getPassword() != null) {
             existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
         User updatedUser = userService.save(existingUser);
-        return ResponseEntity.ok(updatedUser);
+
+        UserDTO userDTO = new UserDTO(updatedUser.getName(), updatedUser.getEmail(), updatedUser.getAddress());
+        return ResponseEntity.ok(userDTO);
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
@@ -73,5 +77,10 @@ public class UserController {
 
         userService.delete(userId);
         return ResponseEntity.noContent().build();
+    }
+    private boolean validateUser(User user) {
+        return user.getEmail().trim().length() > 5 &&
+//                user.getPassword().trim().length() > 7 &&
+                user.getName().trim().length() > 2;
     }
 }

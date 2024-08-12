@@ -19,7 +19,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String address;
 
     @Column(unique = true)
@@ -30,10 +29,10 @@ public class User {
     private String password;
 
     private String role;
-//
-//    @OneToMany(mappedBy = "accountHolder", cascade = CascadeType.REMOVE, orphanRemoval = true)
-//    private List<Account> accounts;
-//
+
+    @OneToMany(mappedBy = "accountHolder", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Account> accounts;
+
 //    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = false)
 //    private List<Transaction> sentTransactions;
 //

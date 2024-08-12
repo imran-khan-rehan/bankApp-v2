@@ -1,9 +1,11 @@
 package com.redmath.Bank.App.Account;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
+import java.util.List;
 
-@Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    // You can add custom query methods here if needed
+    Optional<Account> findByAccountHolderId(Long accountHolderId);
+    Optional<Account> findByAccountNumber(String accountNumber);
+    List<Account> findAllByAccountHolderId(Long accountHolderId);
 }

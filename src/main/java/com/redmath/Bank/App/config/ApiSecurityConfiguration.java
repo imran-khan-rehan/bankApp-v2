@@ -82,8 +82,10 @@ public class ApiSecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT","PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type"));
+        // Expose the Authorization header s o it can be accessed by the frontend
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -101,6 +103,7 @@ public class ApiSecurityConfiguration {
                         .requestMatchers("/api/v2/auth/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/swagger-ui/**",  "/h2-console", "/v3/api-docs", "/swagger-ui/swagger-config.json").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v2/users").permitAll()
+
 //                        .requestMatchers(HttpMethod.GET, "/api/v1/balance/all").hasAnyAuthority("ADMIN")
 //                        .requestMatchers(HttpMethod.GET, "/api/v1/transactions/all").hasAnyAuthority("ADMIN")
 //                        .requestMatchers(HttpMethod.DELETE,"api/v1/users/**").hasAnyAuthority("ADMIN")

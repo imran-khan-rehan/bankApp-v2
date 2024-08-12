@@ -5,6 +5,7 @@ import com.redmath.Bank.App.Jwt.JwtUtil;
 import com.redmath.Bank.App.User.User;
 import com.redmath.Bank.App.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,23 +48,26 @@ public class AuthService {
         }
         User user = userRepository.findByEmail(authRequest.getEmail());
         String token = jwtUtil.generateToken(authRequest.getEmail());
-        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getRole(), "1234"));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+        AuthResponse authResponse = new AuthResponse(user.getId(), user.getRole());
+
+        return ResponseEntity.ok().headers(headers).body(authResponse);
     }
 
     public String registerUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+       // user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
         // Generate a unique account number
         Long userId = user.getId();
         if (userId != null) {
- //           String accountNumber = generateUniqueAccountNumber(userId);
-//            user.setAccountNumber(accountNumber);
 
             // Save user again to update account number
             userRepository.save(user);
 
-            // Proceed with balance creation
+            // Proceed with account creation
             if (userRepository.findByEmail(user.getEmail()).getId() != null) {
                accountService.createAccount(user,"saving");
             } else {

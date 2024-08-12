@@ -4,6 +4,7 @@ import com.redmath.Bank.App.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -27,9 +28,13 @@ public class AccountService {
 
         return accountRepository.save(account);
     }
-
-    public Account getAccountById(Long accountId) {
-        return accountRepository.findById(accountId).orElse(null);
+public List<Account> findAll()
+{
+    return accountRepository.findAll();
+}
+    public Account getAccountByHoderId(Long accountId) {
+        System.out.println("hi iam in acount get function");
+        return accountRepository.findByAccountHolderId(accountId).orElse(null);
     }
 
     public boolean deleteAccount(Long accountId) {
@@ -38,5 +43,9 @@ public class AccountService {
             return true;
         }
         return false;
+    }
+    public Account getByAccountNumber(String accountNumber)
+    {
+        return accountRepository.findByAccountNumber(accountNumber).orElseGet(null);
     }
 }

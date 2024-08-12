@@ -11,8 +11,8 @@ public class Account {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn( nullable = false)
+    @ManyToOne
+    @JoinColumn(name="account_holder")
     private User accountHolder;
 
     @Column(nullable = false, unique = true)
