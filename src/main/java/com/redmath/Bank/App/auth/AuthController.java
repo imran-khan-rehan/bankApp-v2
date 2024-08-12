@@ -21,12 +21,12 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) throws Exception {
+    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) throws Exception {
         User user = userRepository.findByEmail(authRequest.getEmail());
         if (user == null) {
             return ResponseEntity
                     .status(404) // 404 Not Found
-                    .body(new AuthResponse("User does not exist"));
+                    .body("User does not exist");
         }
         return authService.authenticate(authRequest);
     }

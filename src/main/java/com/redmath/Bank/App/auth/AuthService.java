@@ -35,7 +35,7 @@ public class AuthService {
 
     private static final int UNAUTHORIZED_STATUS = HttpStatus.UNAUTHORIZED.value();
 
-    public ResponseEntity<AuthResponse> authenticate(AuthRequest authRequest) throws Exception {
+    public ResponseEntity<?> authenticate(AuthRequest authRequest) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
@@ -43,7 +43,7 @@ public class AuthService {
         } catch (BadCredentialsException e) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse("Incorrect password"));
+                    .body("Incorrect password");
         }
         User user = userRepository.findByEmail(authRequest.getEmail());
         String token = jwtUtil.generateToken(authRequest.getEmail());
